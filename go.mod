@@ -5,6 +5,12 @@ go 1.17
 require github.com/SharkEzz/sgp4 v1.0.0
 
 require (
+	github.com/fasthttp/websocket v1.4.4 // indirect
+	github.com/gofiber/websocket/v2 v2.0.14
+	github.com/savsgio/gotils v0.0.0-20211223103454-d0aaa54c5899 // indirect
+)
+
+require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.9.0
