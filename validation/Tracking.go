@@ -9,7 +9,7 @@ import (
 
 func ValidateWebsocketQuery(c *websocket.Conn) (int, float64, float64, float64, error) {
 	var (
-		qCatNbr = c.Query("catNbr")
+		qCatNbr = c.Query("catnbr")
 		qLat    = c.Query("lat")
 		qLng    = c.Query("lng")
 		qAlt    = c.Query("alt")

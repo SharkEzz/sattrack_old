@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 
 	"github.com/SharkEzz/sattrack/database"
 	"github.com/SharkEzz/sattrack/handlers"
@@ -12,12 +13,18 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
+const (
+	AppName = "SatTrack"
+)
+
 var (
 	shouldUpdate = flag.Bool("update", false, "Use this flag to update all the TLE")
+	Version      = "no_version"
 )
 
 func main() {
 	flag.Parse()
+
 	db := database.Init("database/local.db")
 
 	validator := validator.New()
@@ -26,7 +33,9 @@ func main() {
 		services.UpdateDatabase(db)
 	}
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		DisableStartupMessage: true,
+	})
 
 	app.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
@@ -34,6 +43,10 @@ func main() {
 			return c.Next()
 		}
 		return fiber.ErrUpgradeRequired
+	})
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString(AppName)
 	})
 
 	app.Post("/tracking", func(c *fiber.Ctx) error {
@@ -44,5 +57,6 @@ func main() {
 		handlers.HandleWsTracking(c, db)
 	}))
 
+	log.Println("Started", AppName, Version)
 	app.Listen(":8000")
 }

@@ -77,9 +77,9 @@ func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
 		observation := sgp4.ObservationFromLocation(lat, lng, alt)
 		if err := c.WriteJSON(observation); err != nil {
 			// error
-			break
+			return
 		}
-		time.Sleep(time.Millisecond * 500)
+		time.Sleep(time.Second)
 	}
 }
 
