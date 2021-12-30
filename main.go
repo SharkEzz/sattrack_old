@@ -24,12 +24,15 @@ var (
 )
 
 func main() {
+	log.Println("Starting", appName, version)
 	flag.Parse()
 
 	db := database.Init("database/local.db")
 
 	if *shouldUpdate {
 		services.UpdateDatabase(*tleListURL, db)
+	} else {
+		log.Println("Not updating TLE database (flag -update not given)")
 	}
 
 	validator := validator.New()
@@ -59,6 +62,6 @@ func main() {
 		handlers.HandleWsTracking(c, db)
 	}))
 
-	log.Println("Started", appName, version)
+	log.Println(appName, "ready")
 	app.Listen(":8000")
 }
