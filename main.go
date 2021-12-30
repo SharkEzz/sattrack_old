@@ -4,9 +4,9 @@ import (
 	"flag"
 
 	"github.com/SharkEzz/sattrack/database"
-	"github.com/SharkEzz/sattrack/database/models"
 	"github.com/SharkEzz/sattrack/handlers"
 	"github.com/SharkEzz/sattrack/services"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
@@ -19,7 +19,6 @@ var (
 func main() {
 	flag.Parse()
 	db := database.Init("database/local.db")
-	db.AutoMigrate(&models.TLE{})
 
 	validator := validator.New()
 

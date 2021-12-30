@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/SharkEzz/sattrack/dto"
 	"github.com/SharkEzz/sattrack/services"
+	"github.com/SharkEzz/sattrack/validation"
 	"github.com/SharkEzz/sgp4"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -54,42 +54,22 @@ func HandlePostTracking(c *fiber.Ctx, db *gorm.DB, validator *validator.Validate
 
 func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
 	defer c.Close()
-	var (
-		qCatNbr = c.Query("catNbr")
-		qLat    = c.Query("lat")
-		qLng    = c.Query("lng")
-		qAlt    = c.Query("alt")
-	)
-	catNbr, err := strconv.ParseInt(qCatNbr, 10, 64)
+	catNbr, lat, lng, alt, err := validation.ValidateWebsocketQuery(c)
+
 	if err != nil {
-		handleError(c, "Invalid CatNbr")
-		return
-	}
-	lat, err := strconv.ParseFloat(qLat, 64)
-	if err != nil {
-		handleError(c, "Invalid Latitude")
-		return
-	}
-	lng, err := strconv.ParseFloat(qLng, 64)
-	if err != nil {
-		handleError(c, "Invalid Longitude")
-		return
-	}
-	alt, err := strconv.ParseFloat(qAlt, 64)
-	if err != nil {
-		handleError(c, "Invalid Altitude")
+		handleError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	tle, err := services.GetTLEFromDatabase(int(catNbr), db)
 	if err != nil {
-		handleError(c, "TLE not found")
+		handleError(c, http.StatusNotFound, "TLE not found")
 		return
 	}
 
 	sgp4, err := sgp4.NewSGP4(tle)
 	if err != nil {
-		handleError(c, "Error while initializing SGP4, try again later")
+		handleError(c, http.StatusInternalServerError, "Error while initializing SGP4, try again later")
 		return
 	}
 
@@ -103,7 +83,9 @@ func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
 	}
 }
 
-func handleError(c *websocket.Conn, errStr string) {
-	c.WriteMessage(1, []byte(errStr))
-	c.Close()
+func handleError(c *websocket.Conn, status uint, message string) {
+	c.WriteJSON(dto.Error{
+		Status:  status,
+		Message: message,
+	})
 }
