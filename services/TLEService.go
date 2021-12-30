@@ -2,8 +2,8 @@ package services
 
 import (
 	"errors"
-	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -13,16 +13,13 @@ import (
 	"gorm.io/gorm"
 )
 
-// CelesTrack active satellites list
-const activeListUrl string = "https://celestrak.com/NORAD/elements/active.txt"
-
-// Fetch all active satellite from CelesTrack and update the satellites table
-func UpdateDatabase(db *gorm.DB) error {
-	fmt.Println("Updating TLE database")
-	fmt.Println("Deleting record from `tles` table")
+// Fetch all active satellite a defined URL and update the tles table
+func UpdateDatabase(url string, db *gorm.DB) error {
+	start := time.Now()
+	log.Println("Starting TLE updater")
 	db.Exec("DELETE FROM tles")
-	fmt.Println("Querying new TLE list")
-	res, err := http.Get(activeListUrl)
+	log.Println("Querying new TLE list")
+	res, err := http.Get(url)
 	if err != nil {
 		return err
 	}
@@ -35,8 +32,6 @@ func UpdateDatabase(db *gorm.DB) error {
 		return errors.New("invalid TLE count")
 	}
 
-	fmt.Println("Inserting new records")
-	start := time.Now()
 	satellites := []models.TLE{}
 	for i := 0; i < len(contentArr); i += 3 {
 		tle, err := sgp4.NewTLE(contentArr[i][:24], contentArr[i+1][:69], contentArr[i+2][:69])
@@ -53,7 +48,7 @@ func UpdateDatabase(db *gorm.DB) error {
 	}
 	db.Create(&satellites)
 
-	fmt.Printf("Inserted %v TLE in %s\n", len(contentArr)/3, time.Since(start))
+	log.Default().Printf("Updated %v TLE in %s\n", len(contentArr)/3, time.Since(start).Round(time.Millisecond))
 
 	return nil
 }

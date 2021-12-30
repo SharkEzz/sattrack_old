@@ -14,12 +14,13 @@ import (
 )
 
 const (
-	AppName = "SatTrack"
+	appName string = "SatTrack"
 )
 
 var (
 	shouldUpdate = flag.Bool("update", false, "Use this flag to update all the TLE")
-	Version      = "no_version"
+	tleListURL   = flag.String("tleUrl", "https://celestrak.com/NORAD/elements/active.txt", "default URL to fetch TLEs")
+	version      = "devel"
 )
 
 func main() {
@@ -27,14 +28,15 @@ func main() {
 
 	db := database.Init("database/local.db")
 
-	validator := validator.New()
-
 	if *shouldUpdate {
-		services.UpdateDatabase(db)
+		services.UpdateDatabase(*tleListURL, db)
 	}
+
+	validator := validator.New()
 
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
+		AppName:               appName,
 	})
 
 	app.Use("/ws", func(c *fiber.Ctx) error {
@@ -46,7 +48,7 @@ func main() {
 	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString(AppName)
+		return c.SendString(appName + "🛰️")
 	})
 
 	app.Post("/tracking", func(c *fiber.Ctx) error {
@@ -57,6 +59,6 @@ func main() {
 		handlers.HandleWsTracking(c, db)
 	}))
 
-	log.Println("Started", AppName, Version)
+	log.Println("Started", appName, version)
 	app.Listen(":8000")
 }
