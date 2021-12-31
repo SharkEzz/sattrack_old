@@ -69,3 +69,11 @@ func GetTLEFromDatabase(catNbr int, db *gorm.DB) (*sgp4.TLE, error) {
 
 	return tle, nil
 }
+
+func GetTLECount(db *gorm.DB) int64 {
+	var count int64
+
+	db.Model(&models.TLE{}).Count(&count)
+
+	return count
+}

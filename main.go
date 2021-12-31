@@ -27,13 +27,15 @@ func main() {
 	log.Println("Starting", appName, version)
 	flag.Parse()
 
-	db := database.Init("database/local.db")
+	db := database.Init("./local.db")
 
 	if *shouldUpdate {
 		services.UpdateDatabase(*tleListURL, db)
 	} else {
 		log.Println("Not updating TLE database (flag -update not given)")
 	}
+
+	log.Println("Loaded", services.GetTLECount(db), "TLEs")
 
 	validator := validator.New()
 
