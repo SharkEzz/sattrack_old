@@ -1,45 +1,37 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { Button, Card, Col, Container, Row } from 'react-bootstrap';
+import Navbar from './components/UI/Navbar';
+import TrackingForm from './components/UI/TrackingForm';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+    <>
+      <Navbar />
+      <Container className="mt-3">
+        <Row className="gy-3">
+          <Col md={5} sm={12}>
+            <Card>
+              <Card.Header>Tracking configuration</Card.Header>
+              <Card.Body>
+                <TrackingForm />
+              </Card.Body>
+              <Card.Footer>
+                <div className="d-flex justify-content-end gap-1">
+                  <Button variant="danger">Stop</Button>
+                  <Button variant="success">Start</Button>
+                </div>
+              </Card.Footer>
+            </Card>
+          </Col>
+          <Col md={7} sm={12}>
+            <Card>
+              <Card.Header>Tracking</Card.Header>
+              <Card.Body>placeholder</Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </>
+  );
 }
 
-export default App
+export default App;
