@@ -27,6 +27,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags:
-            - ${{ secrets.DOCKER_HUB_USERNAME }}/sattrack:latest
-            - ${{ secrets.DOCKER_HUB_USERNAME }}/sattrack:${{ GITHUB_REF }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sattrack:latest
