@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  sattrack:
+    build: .
+    container_name: sattrack
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - ./data:/app/build/database:delegated
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sattrack.entrypoints=http"
+      - "traefik.http.routers.sattrack.rule=Host(`sattrack.space`)"
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true

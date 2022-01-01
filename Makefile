@@ -4,7 +4,7 @@ endif
 
 DATE := $(shell date -u +%Y%m%d.%H%M%S)
 
-LDFLAGS = -ldflags "-X=main.version=$(VERSION)-$(DATE)"
+LDFLAGS = -trimpath -ldflags "-X=main.version=$(VERSION)-$(DATE)"
 
 .PHONY: sattrack clean
 
