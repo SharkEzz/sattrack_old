@@ -5,10 +5,8 @@ services:
     build: .
     container_name: sattrack
     restart: unless-stopped
-    ports:
-      - "8000:8000"
-    # networks:
-    #   - proxy
+    networks:
+      - proxy
     volumes:
       - ./data:/app/database:delegated
     labels:
@@ -17,6 +15,6 @@ services:
       - "traefik.http.routers.sattrack.rule=Host(`sattrack.space`)"
       - "traefik.docker.network=proxy"
 
-# networks:
-#   proxy:
-#     external: true
+networks:
+  proxy:
+    external: true
