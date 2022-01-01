@@ -52,17 +52,16 @@ func main() {
 		return fiber.ErrUpgradeRequired
 	})
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString(appName + "🛰️")
-	})
-
-	app.Post("/tracking", func(c *fiber.Ctx) error {
+	apiGroup := app.Group("/api")
+	apiGroup.Post("/tracking", func(c *fiber.Ctx) error {
 		return handlers.HandlePostTracking(c, db, validator)
 	})
 
 	app.Get("/ws/tracking", websocket.New(func(c *websocket.Conn) {
 		handlers.HandleWsTracking(c, db)
 	}))
+
+	app.Static("/", "./public")
 
 	log.Println(appName, "ready")
 	app.Listen(":8000")
