@@ -18,7 +18,7 @@ RUN npm i && npm run build
 
 FROM debian:bullseye as sattrack_runner
 
-RUN apt update && apt install curl -y
+RUN apt-get update && apt-get install curl -y
 WORKDIR /app
 COPY --from=sattrack-back_builder /app/sattrack .
 RUN mkdir /app/database
