@@ -1,15 +1,28 @@
-FROM golang:1.17.5 as sattrack_runner
+FROM golang:1.17.5 as sattrack-back_builder
 
 WORKDIR /app
 COPY . .
 
-RUN go get -d -v ./...
-RUN make sattrack
+RUN make sattrack-back
 
-WORKDIR /app/build
-RUN mv /app/sattrack /app/build
-RUN mkdir /app/build/database
+FROM node:16.13.1-alpine3.14 as sattrack-front_builder
 
-ENTRYPOINT [ "/app/build/sattrack", "-update" ]
+WORKDIR /app
+COPY js/src ./src
+COPY js/index.html .
+COPY js/package-lock.json .
+COPY js/package.json .
+COPY js/vite.config.js .
 
+RUN npm i && npm run build
+
+FROM debian:bullseye as sattrack_runner
+
+RUN apt-get update && apt-get install curl -y
+WORKDIR /app
+COPY --from=sattrack-back_builder /app/sattrack .
+RUN mkdir /app/database
+COPY --from=sattrack-front_builder /app/dist ./public
+
+ENTRYPOINT [ "/app/sattrack", "-update" ]
 EXPOSE 8000

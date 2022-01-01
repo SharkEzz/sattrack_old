@@ -6,12 +6,23 @@ DATE := $(shell date -u +%Y%m%d.%H%M%S)
 
 LDFLAGS = -trimpath -ldflags "-X=main.version=$(VERSION)-$(DATE)"
 
-.PHONY: sattrack clean
+.PHONY: all run sattrack-back sattrack-front clean
 
-.DEFAULT_GOAL := sattrack
+.DEFAULT_GOAL := all
 
-sattrack:
-	go build $(LDFLAGS)
+all: sattrack-back sattrack-front
+
+run: all
+	./sattrack -update
+
+sattrack-back:
+	go build -o sattrack -v $(LDFLAGS)
+
+sattrack-front:
+	npm --prefix js i
+	npm --prefix js run build
+	mkdir public
+	mv js/dist/* public
 
 clean:
-	rm -f sattrack
+	rm -rf sattrack public data database/local.db js/dist
