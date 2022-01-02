@@ -79,7 +79,7 @@ function PolarView({ azimuth, elevation }) {
       <canvas className="mb-3" height="320" width="320" ref={canvasRef} />
     </div>
   );
-};
+}
 
 PolarView.propTypes = {
   azimuth: PropTypes.number,
@@ -89,6 +89,6 @@ PolarView.propTypes = {
 PolarView.defaultProps = {
   azimuth: null,
   elevation: null,
-}
+};
 
 export default PolarView;

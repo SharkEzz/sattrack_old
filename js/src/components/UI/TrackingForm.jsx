@@ -59,7 +59,9 @@ function TrackingForm({
               })}
             />
             {error && (
-              <Alert className="mt-2" variant="danger">{error.message}</Alert>
+              <Alert className="mt-2" variant="danger">
+                {error.message}
+              </Alert>
             )}
           </Form.Group>
           <hr />

@@ -12,7 +12,9 @@ function Navbar() {
             <Nav.Link as={Link} to="/" href="#" className="active">
               Home
             </Nav.Link>
-            <Nav.Link as={Link} to="/about" href="#">About</Nav.Link>
+            <Nav.Link as={Link} to="/about" href="#">
+              About
+            </Nav.Link>
           </Nav>
         </BSNavbar.Collapse>
       </Container>
