@@ -20,6 +20,7 @@ type TrackingResponse struct {
 
 type ObservationWsResponse struct {
 	SatelliteName string
+	Visible       bool
 	GeneratedAt   time.Time
 	sgp4.Observation
 }

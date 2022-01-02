@@ -5,7 +5,7 @@ import PolarView from '../components/UI/PolarView';
 import TrackingForm from '../components/UI/TrackingForm';
 
 function TrackingPage() {
-  const { opened, openConnection, closeConnection, message, isOpening, isClosing } = useWebsocket();
+  const { opened, openConnection, closeConnection, message: data, isOpening, isClosing } = useWebsocket();
   const { getLocation, location } = useLocation();
 
   return (
@@ -24,46 +24,59 @@ function TrackingPage() {
         </Col>
         <Col lg={7} md={12}>
           <Card>
-            <Card.Header>Tracking panel</Card.Header>
+            <Card.Header>
+              <div className="d-flex align-items-center justify-content-between">
+                <span>
+                  Tracking panel
+                </span>
+                <Badge bg={opened ? "success" : "warning"}>{opened ? "Tracking" : "Idle"}</Badge>
+              </div>
+
+            </Card.Header>
             <Card.Body>
-              <h4>
-                {message ? message.SatelliteName : 'No satellite tracking'}
-              </h4>
+              <div className="d-flex align-items-center gap-4 mb-3">
+                <h4 className="m-0">
+                  {data ? data.SatelliteName : 'No satellite tracking'}
+                </h4>
+                {data && (
+                  <Badge bg={data.Visible ? "primary" : "danger"}>{data.Visible ? "Visible" : "Not visible"}</Badge>
+                )}
+              </div>
               <Row>
-                <Col md={6} sm={12}>
-                  {message && (
+                <Col md={4} sm={12}>
+                  {data && (
                     <>
                       <Row>
-                        <Col sm={4}>Azimuth:</Col>
+                        <Col>Azimuth:</Col>
                         <Col>
-                          <Badge>{message.Azimuth.toFixed(2)}</Badge>
+                          <Badge>{data.Azimuth.toFixed(2)}</Badge>
                         </Col>
                       </Row>
                       <Row>
-                        <Col sm={4}>Elevation:</Col>
+                        <Col>Elevation:</Col>
                         <Col>
-                          <Badge>{message.Elevation.toFixed(2)}</Badge>
+                          <Badge>{data.Elevation.toFixed(2)}</Badge>
                         </Col>
                       </Row>
                       <Row>
-                        <Col sm={4}>Latitude:</Col>
+                        <Col>Latitude:</Col>
                         <Col>
-                          <Badge>{message.SatLat.toFixed(2)}</Badge>
+                          <Badge>{data.SatLat.toFixed(2)}</Badge>
                         </Col>
                       </Row>
                       <Row>
-                        <Col sm={4}>Longitude:</Col>
+                        <Col>Longitude:</Col>
                         <Col>
-                          <Badge>{message.SatLng.toFixed(2)}</Badge>
+                          <Badge>{data.SatLng.toFixed(2)}</Badge>
                         </Col>
                       </Row>
                     </>
                   )}
                 </Col>
-                <Col md={6} sm={12}>
+                <Col md={8} sm={12}>
                   <PolarView
-                    azimuth={message ? Number(message.Azimuth.toFixed(2)) : null}
-                    elevation={message ? Number(message.Elevation.toFixed(2)) : null}
+                    azimuth={data ? Number(data.Azimuth.toFixed(2)) : null}
+                    elevation={data ? Number(data.Elevation.toFixed(2)) : null}
                   />
                 </Col>
               </Row>

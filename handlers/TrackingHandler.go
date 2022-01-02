@@ -78,6 +78,7 @@ func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
 		observation := sgp4.ObservationFromLocation(lat, lng, alt)
 		responseDto := dto.ObservationWsResponse{
 			SatelliteName: strings.TrimSpace(tle.Name()),
+			Visible:       observation.Elevation > 0,
 			GeneratedAt:   time.Now().UTC(),
 			Observation:   observation,
 		}
