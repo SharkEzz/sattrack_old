@@ -2,7 +2,7 @@ import { Navbar as BSNavbar, Container, Nav } from 'react-bootstrap';
 
 function Navbar() {
   return (
-    <BSNavbar bg="light" expand="lg">
+    <BSNavbar bg="dark" className="navbar-dark" expand="lg">
       <Container>
         <BSNavbar.Brand href="#home">SatTrack</BSNavbar.Brand>
         <BSNavbar.Toggle aria-controls="basic-navbar-nav" />
