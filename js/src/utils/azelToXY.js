@@ -9,7 +9,7 @@
  * @returns {{x: Number, y: Number}} The polar coordinates of the tracked element
  */
  const azelToXY = (centerX, centerY, radius, azimuth, elevation) => {
-    if (azimuth < 0 || elevation < 0) {
+    if (!azimuth || !elevation || azimuth < 0 || elevation < 0) {
       return {
         x: null,
         y: null,

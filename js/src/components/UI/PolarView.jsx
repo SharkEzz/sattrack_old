@@ -82,8 +82,13 @@ function PolarView({ azimuth, elevation }) {
 };
 
 PolarView.propTypes = {
-  azimuth: PropTypes.number.isRequired,
-  elevation: PropTypes.number.isRequired,
+  azimuth: PropTypes.number,
+  elevation: PropTypes.number,
 };
+
+PolarView.defaultProps = {
+  azimuth: null,
+  elevation: null,
+}
 
 export default PolarView;
