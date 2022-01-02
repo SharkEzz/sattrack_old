@@ -1,15 +1,41 @@
+import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 import { Button, Col, Form, Row, Card } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 
-function TrackingForm({ opened, openConnection, closeConnection }) {
+function TrackingForm({
+  opened,
+  openConnection,
+  closeConnection,
+  getLocation,
+  location,
+}) {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
-  const handleOpenConnection = (data) => {
-    console.log(data);
+  useEffect(() => {
+    if (location) {
+      setValue('lat', location.lat);
+      setValue('lng', location.lng);
+      setValue('alt', location.alt);
+    }
+  }, [location, setValue]);
+
+  const handleCloseConnection = (e) => {
+    e.preventDefault();
+    closeConnection();
+  }
+
+  const handleOpenConnection = ({ satellite, lat, lng, alt }) => {
+    openConnection('ws://127.0.0.1:8000/ws/tracking', satellite, {
+      lat,
+      lng,
+      alt,
+    });
   };
 
   return (
@@ -24,7 +50,7 @@ function TrackingForm({ opened, openConnection, closeConnection }) {
                 required: 'You must select a satellite',
               })}
             >
-              <option value={1}>Test</option>
+              <option value={25544}>ISS</option>
             </Form.Select>
           </Form.Group>
           <hr />
@@ -34,7 +60,9 @@ function TrackingForm({ opened, openConnection, closeConnection }) {
                 <h4>Location</h4>
               </Col>
               <Col style={{ textAlign: 'right' }}>
-                <Button size="sm">Localize</Button>
+                <Button size="sm" onClick={getLocation}>
+                  Localize
+                </Button>
               </Col>
             </Row>
             <Row>
@@ -42,31 +70,45 @@ function TrackingForm({ opened, openConnection, closeConnection }) {
                 <Form.Label>Latitude</Form.Label>
                 <Form.Control
                   type="number"
+                  step={0.01}
                   min={0}
-                  {...register('latitude', {
+                  isInvalid={errors?.lat}
+                  {...register('lat', {
                     required: 'Latitude is required',
                   })}
                 />
+                <Form.Control.Feedback type="invalid">
+                  Invalid latitude
+                </Form.Control.Feedback>
               </Col>
               <Col>
                 <Form.Label>Longitude</Form.Label>
                 <Form.Control
                   type="number"
+                  step={0.01}
                   min={0}
-                  {...register('longitude', {
+                  isInvalid={errors?.lng}
+                  {...register('lng', {
                     required: 'Longitude is required',
                   })}
                 />
+                <Form.Control.Feedback type="invalid">
+                  Invalid longitude
+                </Form.Control.Feedback>
               </Col>
               <Col>
-                <Form.Label>Altitude</Form.Label>
+                <Form.Label>Altitude (meters)</Form.Label>
                 <Form.Control
                   type="number"
                   min={0}
-                  {...register('altitude', {
+                  isInvalid={errors?.alt}
+                  {...register('alt', {
                     required: 'Altitude is required',
                   })}
                 />
+                <Form.Control.Feedback type="invalid">
+                  Invalid altitude
+                </Form.Control.Feedback>
               </Col>
             </Row>
           </Form.Group>
@@ -74,11 +116,11 @@ function TrackingForm({ opened, openConnection, closeConnection }) {
         <Card.Footer>
           <div className="d-flex justify-content-end">
             {opened ? (
-              <Button variant="danger" onClick={closeConnection}>
+              <Button variant="danger" size="sm" type="button" onClick={handleCloseConnection}>
                 Stop
               </Button>
             ) : (
-              <Button variant="success" type="submit">
+              <Button variant="success" size="sm" type="submit">
                 Start
               </Button>
             )}
@@ -88,5 +130,21 @@ function TrackingForm({ opened, openConnection, closeConnection }) {
     </Form>
   );
 }
+
+TrackingForm.propTypes = {
+  opened: PropTypes.bool.isRequired,
+  openConnection: PropTypes.func.isRequired,
+  closeConnection: PropTypes.func.isRequired,
+  getLocation: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+    alt: PropTypes.number,
+  }),
+};
+
+TrackingForm.defaultProps = {
+  location: null,
+};
 
 export default TrackingForm;

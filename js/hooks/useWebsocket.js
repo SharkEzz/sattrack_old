@@ -3,13 +3,14 @@ import { useRef, useState } from 'react';
 function useWebsocket() {
   const [opened, setOpened] = useState(false);
   const [message, setMessage] = useState(null);
-  const websocketRef = useRef();
+  const websocket = useRef(null);
 
   /**
    * @param {MessageEvent} event
    */
   const handleMessage = (event) => {
     setMessage(JSON.parse(event.data));
+    websocket.current.send('ok');
   };
 
   const handleClose = () => {
@@ -18,6 +19,10 @@ function useWebsocket() {
 
   const handleOpen = () => {
     setOpened(true);
+  };
+
+  const closeConnection = () => {
+    websocket.current.close();
   };
 
   /**
@@ -32,16 +37,11 @@ function useWebsocket() {
       url.searchParams.append(item, location[item]);
     });
 
-    const ws = new WebSocket(url);
-    ws.onopen = handleOpen;
-    ws.onmessage = handleMessage;
-    ws.onclose = handleClose;
-
-    websocketRef.current = ws;
-  };
-
-  const closeConnection = () => {
-    websocketRef.current.close();
+    websocket.current = new WebSocket(url);
+    websocket.current.onclose = handleClose;
+    websocket.current.onopen = handleOpen;
+    websocket.current.onmessage = handleMessage;
+    websocket.current.onerror = closeConnection;
   };
 
   return {

@@ -11,6 +11,9 @@ function Navbar() {
             <Nav.Link href="#" className="active">
               Home
             </Nav.Link>
+            <Nav.Link href="#">
+              About
+            </Nav.Link>
           </Nav>
         </BSNavbar.Collapse>
       </Container>
