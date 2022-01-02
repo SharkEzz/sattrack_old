@@ -19,7 +19,7 @@ function useLocation() {
         setLocation({
           lat: Number(latitude.toFixed(2)),
           lng: Number(longitude.toFixed(2)),
-          alt: altitude ? Number(altitude.toFixed(2)) : 0,
+          alt: altitude ? Number(altitude.toFixed(2)) : null,
         });
         setInitialized(true);
       },

@@ -9,7 +9,6 @@ function About() {
           <h2>A modern satellite tracking solution</h2>
         </Col>
       </Row>
-      WIP
     </Container>
   );
 }

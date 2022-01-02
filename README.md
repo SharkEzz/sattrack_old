@@ -2,6 +2,8 @@
 
 Modern satellite tracking solution (currently WIP)
 
+![](img/home.png)
+
 ## TODO
 
 ### Backend
@@ -15,5 +17,10 @@ Modern satellite tracking solution (currently WIP)
 
 - [ ] Migrate to Typescript
 - [ ] About page
-- [ ] Custom UI (Currently using Bootstrap 💀)
+- [ ] Custom UI (Currently using Bootstrap 💀) + enhancements
 - [ ] More functionalities (pass prediction, elevation/azimuth graph)
+- [ ] GitHub action for ESLint
+
+### Docker
+
+- [ ] Dockerhub tag (currently it is only tagging with 'latest')

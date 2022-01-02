@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { Button, Col, Form, Row, Card } from 'react-bootstrap';
+import { Button, Col, Form, Row, Card, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 
 function TrackingForm({
@@ -11,6 +11,7 @@ function TrackingForm({
   location,
   isOpening,
   isClosing,
+  error,
 }) {
   const {
     register,
@@ -23,7 +24,9 @@ function TrackingForm({
     if (location) {
       setValue('lat', location.lat);
       setValue('lng', location.lng);
-      setValue('alt', location.alt);
+      if (location.alt) {
+        setValue('alt', location.alt);
+      }
     }
   }, [location, setValue]);
 
@@ -32,8 +35,8 @@ function TrackingForm({
     closeConnection();
   };
 
-  const handleOpenConnection = ({ satellite, lat, lng, alt }) => {
-    openConnection('ws://127.0.0.1:8000/ws/tracking', satellite, {
+  const handleOpenConnection = ({ catnbr, lat, lng, alt }) => {
+    openConnection('ws://127.0.0.1:8000/ws/tracking', catnbr, {
       lat,
       lng,
       alt,
@@ -46,14 +49,18 @@ function TrackingForm({
         <Card.Header>Tracking configuration</Card.Header>
         <Card.Body>
           <Form.Group className="mb-3" controlId="form-select-satellite">
-            <h4 className="mb-3">Satellite</h4>
-            <Form.Select
-              {...register('satellite', {
-                required: 'You must select a satellite',
+            <h4 className="mb-3">Satellite catalog number</h4>
+            <Form.Control
+              min={0}
+              type="number"
+              placeholder="25544"
+              {...register('catnbr', {
+                required: 'You must enter a satellite catalog number',
               })}
-            >
-              <option value={33591}>ISS</option>
-            </Form.Select>
+            />
+            {error && (
+              <Alert className="mt-2" variant="danger">{error.message}</Alert>
+            )}
           </Form.Group>
           <hr />
           <Form.Group className="mb-3" controlId="form-set-location">
@@ -72,6 +79,7 @@ function TrackingForm({
                 <Form.Label>Latitude</Form.Label>
                 <Form.Control
                   type="number"
+                  placeholder="20,33"
                   step={0.01}
                   min={0}
                   isInvalid={errors?.lat}
@@ -87,6 +95,7 @@ function TrackingForm({
                 <Form.Label>Longitude</Form.Label>
                 <Form.Control
                   type="number"
+                  placeholder="4,88"
                   step={0.01}
                   min={0}
                   isInvalid={errors?.lng}
@@ -103,6 +112,7 @@ function TrackingForm({
                 <Form.Control
                   type="number"
                   min={0}
+                  placeholder="57"
                   isInvalid={errors?.alt}
                   {...register('alt', {
                     required: 'Altitude is required',
@@ -156,10 +166,15 @@ TrackingForm.propTypes = {
   }),
   isOpening: PropTypes.bool.isRequired,
   isClosing: PropTypes.bool.isRequired,
+  error: PropTypes.shape({
+    status: PropTypes.number,
+    message: PropTypes.string,
+  }),
 };
 
 TrackingForm.defaultProps = {
   location: null,
+  error: null,
 };
 
 export default TrackingForm;

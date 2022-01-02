@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Badge, Card, Col, Container, Row } from 'react-bootstrap';
 import useLocation from '../../hooks/useLocation';
 import useWebsocket from '../../hooks/useWebsocket';
@@ -5,7 +6,23 @@ import PolarView from '../components/UI/PolarView';
 import TrackingForm from '../components/UI/TrackingForm';
 
 function TrackingPage() {
-  const { opened, openConnection, closeConnection, message: data, isOpening, isClosing } = useWebsocket();
+  const {
+    opened,
+    openConnection,
+    closeConnection,
+    message,
+    isOpening,
+    isClosing,
+    error,
+  } = useWebsocket();
+
+  const data = useMemo(() => {
+    if (message?.Status && message.Status === 404) {
+      return null;
+    }
+
+    return message;
+  }, [message]);
   const { getLocation, location } = useLocation();
 
   return (
@@ -20,18 +37,18 @@ function TrackingPage() {
             closeConnection={closeConnection}
             location={location}
             getLocation={getLocation}
+            error={error}
           />
         </Col>
         <Col lg={7} md={12}>
           <Card>
             <Card.Header>
               <div className="d-flex align-items-center justify-content-between">
-                <span>
-                  Tracking panel
-                </span>
-                <Badge bg={opened ? "success" : "warning"}>{opened ? "Tracking" : "Idle"}</Badge>
+                <span>Tracking panel</span>
+                <Badge bg={opened ? 'success' : 'warning'}>
+                  {opened ? 'Tracking' : 'Idle'}
+                </Badge>
               </div>
-
             </Card.Header>
             <Card.Body>
               <div className="d-flex align-items-center gap-4 mb-3">
@@ -39,7 +56,9 @@ function TrackingPage() {
                   {data ? data.SatelliteName : 'No satellite currently tracked'}
                 </h4>
                 {data && (
-                  <Badge bg={data.Visible ? "primary" : "danger"}>{data.Visible ? "Visible" : "Not visible"}</Badge>
+                  <Badge bg={data.Visible ? 'primary' : 'danger'}>
+                    {data.Visible ? 'Visible' : 'Not visible'}
+                  </Badge>
                 )}
               </div>
               <Row>

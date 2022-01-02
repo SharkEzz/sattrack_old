@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 function useWebsocket() {
   const [opened, setOpened] = useState(false);
   const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
   const [isOpening, setIsOpening] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const websocket = useRef(null);
@@ -11,7 +12,18 @@ function useWebsocket() {
    * @param {MessageEvent} event
    */
   const handleMessage = (event) => {
-    setMessage(JSON.parse(event.data));
+    const receivedMessage = JSON.parse(event.data);
+    if (receivedMessage?.Status && receivedMessage.Status !== 200) {
+      setError({
+        status: receivedMessage.Status,
+        message: receivedMessage.Message,
+      });
+      return;
+    }
+    if (error) {
+      setError(null);
+    }
+    setMessage(receivedMessage);
     websocket.current.send('ok');
   };
 
@@ -55,6 +67,7 @@ function useWebsocket() {
     isClosing,
     opened,
     message,
+    error,
     openConnection,
     closeConnection,
   };
