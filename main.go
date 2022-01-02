@@ -61,7 +61,12 @@ func main() {
 		handlers.HandleWsTracking(c, db)
 	}))
 
-	app.Static("/", "./public")
+	// SPA
+
+	app.Static("/", "public")
+	app.Get("*", func(c *fiber.Ctx) error {
+		return c.SendFile("public/index.html")
+	})
 
 	log.Println(appName, "ready")
 	app.Listen(":8000")

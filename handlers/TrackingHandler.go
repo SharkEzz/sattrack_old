@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/SharkEzz/sattrack/dto"
@@ -75,8 +76,16 @@ func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
 
 	for {
 		observation := sgp4.ObservationFromLocation(lat, lng, alt)
-		if err := c.WriteJSON(observation); err != nil {
-			// error
+		responseDto := dto.ObservationWsResponse{
+			SatelliteName: strings.TrimSpace(tle.Name()),
+			Visible:       observation.Elevation > 0,
+			GeneratedAt:   time.Now().UTC(),
+			Observation:   observation,
+		}
+		if err := c.WriteJSON(responseDto); err != nil {
+			return
+		}
+		if _, _, err = c.ReadMessage(); err != nil {
 			return
 		}
 		time.Sleep(time.Second)
