@@ -17,3 +17,9 @@ type TrackingResponse struct {
 	sgp4.Observation
 	GeneratedAt time.Time
 }
+
+type ObservationWsResponse struct {
+	SatelliteName string
+	GeneratedAt   time.Time
+	sgp4.Observation
+}

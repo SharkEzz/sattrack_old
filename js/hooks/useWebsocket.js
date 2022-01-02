@@ -3,6 +3,8 @@ import { useRef, useState } from 'react';
 function useWebsocket() {
   const [opened, setOpened] = useState(false);
   const [message, setMessage] = useState(null);
+  const [isOpening, setIsOpening] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const websocket = useRef(null);
 
   /**
@@ -15,14 +17,17 @@ function useWebsocket() {
 
   const handleClose = () => {
     setOpened(false);
+    setIsClosing(false);
   };
 
   const handleOpen = () => {
     setOpened(true);
+    setIsOpening(false);
   };
 
   const closeConnection = () => {
     websocket.current.close();
+    setIsClosing(true);
   };
 
   /**
@@ -42,9 +47,12 @@ function useWebsocket() {
     websocket.current.onopen = handleOpen;
     websocket.current.onmessage = handleMessage;
     websocket.current.onerror = closeConnection;
+    setIsOpening(true);
   };
 
   return {
+    isOpening,
+    isClosing,
     opened,
     message,
     openConnection,

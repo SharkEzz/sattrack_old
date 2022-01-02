@@ -9,6 +9,8 @@ function TrackingForm({
   closeConnection,
   getLocation,
   location,
+  isOpening,
+  isClosing,
 }) {
   const {
     register,
@@ -28,7 +30,7 @@ function TrackingForm({
   const handleCloseConnection = (e) => {
     e.preventDefault();
     closeConnection();
-  }
+  };
 
   const handleOpenConnection = ({ satellite, lat, lng, alt }) => {
     openConnection('ws://127.0.0.1:8000/ws/tracking', satellite, {
@@ -50,7 +52,7 @@ function TrackingForm({
                 required: 'You must select a satellite',
               })}
             >
-              <option value={25544}>ISS</option>
+              <option value={33591}>ISS</option>
             </Form.Select>
           </Form.Group>
           <hr />
@@ -59,7 +61,7 @@ function TrackingForm({
               <Col>
                 <h4>Location</h4>
               </Col>
-              <Col style={{ textAlign: 'right' }}>
+              <Col className="text-end">
                 <Button size="sm" onClick={getLocation}>
                   Localize
                 </Button>
@@ -116,11 +118,22 @@ function TrackingForm({
         <Card.Footer>
           <div className="d-flex justify-content-end">
             {opened ? (
-              <Button variant="danger" size="sm" type="button" onClick={handleCloseConnection}>
+              <Button
+                variant="danger"
+                size="sm"
+                type="button"
+                onClick={handleCloseConnection}
+                disabled={isClosing}
+              >
                 Stop
               </Button>
             ) : (
-              <Button variant="success" size="sm" type="submit">
+              <Button
+                variant="success"
+                size="sm"
+                type="submit"
+                disabled={isOpening}
+              >
                 Start
               </Button>
             )}
@@ -141,6 +154,8 @@ TrackingForm.propTypes = {
     lng: PropTypes.number,
     alt: PropTypes.number,
   }),
+  isOpening: PropTypes.bool.isRequired,
+  isClosing: PropTypes.bool.isRequired,
 };
 
 TrackingForm.defaultProps = {
