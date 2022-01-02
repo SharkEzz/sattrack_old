@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Badge, Card, Col, Container, Row } from 'react-bootstrap';
-import useLocation from '../../hooks/useLocation';
-import useWebsocket from '../../hooks/useWebsocket';
+import useLocation from '../hooks/useLocation';
+import useWebsocket from '../hooks/useWebsocket';
 import PolarView from '../components/UI/PolarView';
 import TrackingForm from '../components/UI/TrackingForm';
 
