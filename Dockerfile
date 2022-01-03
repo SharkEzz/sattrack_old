@@ -12,7 +12,8 @@ COPY js/src ./src
 COPY js/index.html .
 COPY js/package-lock.json .
 COPY js/package.json .
-COPY js/vite.config.js .
+COPY js/tsconfig.json .
+COPY js/vite.config.ts .
 
 RUN npm i && npm run build
 
