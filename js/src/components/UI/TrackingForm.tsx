@@ -52,22 +52,19 @@ function TrackingForm({
     closeConnection();
   };
 
-  const handleOpenConnection = ({
-    catnbr,
-    lat,
-    lng,
-    alt,
-  }: {
+  const handleOpenConnection = (data: {
     catnbr: number;
     lat: number;
     lng: number;
     alt: number;
   }) => {
-    openConnection('ws://127.0.0.1:8000/ws/tracking', catnbr, {
-      lat,
-      lng,
-      alt,
-    });
+    // TODO: configurable URL
+    const url = new URL('ws://127.0.0.1:8000/ws/tracking');
+    url.searchParams.append('catnbr', String(data.catnbr));
+    url.searchParams.append('lat', String(data.lat));
+    url.searchParams.append('lng', String(data.lng));
+    url.searchParams.append('alt', String(data.alt));
+    openConnection(url.toString());
   };
 
   return (

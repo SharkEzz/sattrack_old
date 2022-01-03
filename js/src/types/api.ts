@@ -1,10 +1,10 @@
-interface BaseTrackingResponse {
+/**
+ * Generic response type sent from the backend when tracking a satellite
+ */
+export type TrackingResponse = {
   SatName: string;
   GeneratedAt: string;
   Visible: boolean;
-}
-
-interface WsTrackingResponse extends BaseTrackingResponse {
   Azimuth: number;
   Elevation: number;
   Range: number;
@@ -12,11 +12,11 @@ interface WsTrackingResponse extends BaseTrackingResponse {
   SatAltitude: number;
   SatLat: number;
   SatLng: number;
-}
+};
 
-/** Standard API response */
-export type APIResponse = {
+/** Standard API response with generic data type */
+export type APIResponse<T> = {
   Status: number;
   Message: string;
-  Data: WsTrackingResponse;
+  Data: T;
 };

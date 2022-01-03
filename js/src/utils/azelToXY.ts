@@ -21,13 +21,10 @@ const azelToXY = (
 
   const rel = radius - (2 * radius * el) / Math.PI;
 
-  // Compute X and Y positions
-  const x = centerX + rel * Math.sin(az);
-  const y = centerY - rel * Math.cos(az);
-
+  // Return X and Y positions
   return {
-    x,
-    y,
+    x: centerX + rel * Math.sin(az),
+    y: centerY - rel * Math.cos(az),
   };
 };
 
