@@ -1,7 +1,24 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Col, Form, Row, Card, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
+import { GetLocationFn, Location } from '../../hooks/useLocation';
+import {
+  CloseConnectionFn,
+  OpenConnectionFn,
+  WebsocketError,
+} from '../../hooks/useWebsocket';
+
+type TrackingFormProps = {
+  opened: boolean;
+  openConnection: OpenConnectionFn;
+  closeConnection: CloseConnectionFn;
+  getLocation: GetLocationFn;
+  location: Location;
+  isOpening: boolean;
+  isClosing: boolean;
+  error: WebsocketError | null;
+};
 
 function TrackingForm({
   opened,
@@ -12,7 +29,7 @@ function TrackingForm({
   isOpening,
   isClosing,
   error,
-}) {
+}: TrackingFormProps) {
   const {
     register,
     handleSubmit,
@@ -30,12 +47,22 @@ function TrackingForm({
     }
   }, [location, setValue]);
 
-  const handleCloseConnection = (e) => {
+  const handleCloseConnection = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     closeConnection();
   };
 
-  const handleOpenConnection = ({ catnbr, lat, lng, alt }) => {
+  const handleOpenConnection = ({
+    catnbr,
+    lat,
+    lng,
+    alt,
+  }: {
+    catnbr: number;
+    lat: number;
+    lng: number;
+    alt: number;
+  }) => {
     openConnection('ws://127.0.0.1:8000/ws/tracking', catnbr, {
       lat,
       lng,

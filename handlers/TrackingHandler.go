@@ -21,7 +21,7 @@ func HandlePostTracking(c *fiber.Ctx, db *gorm.DB, validator *validator.Validate
 	err := validator.Struct(requestData)
 	if err != nil {
 		c.Response().SetStatusCode(http.StatusBadRequest)
-		return c.JSON(dto.Error{
+		return c.JSON(dto.Response{
 			Status:  http.StatusBadRequest,
 			Message: err.Error(),
 		})
@@ -30,7 +30,7 @@ func HandlePostTracking(c *fiber.Ctx, db *gorm.DB, validator *validator.Validate
 	tle, err := services.GetTLEFromDatabase(requestData.CatNBR, db)
 	if err != nil {
 		c.Response().SetStatusCode(http.StatusNotFound)
-		return c.JSON(dto.Error{
+		return c.JSON(dto.Response{
 			Status:  http.StatusNotFound,
 			Message: "Satellite not found",
 		})
@@ -39,7 +39,7 @@ func HandlePostTracking(c *fiber.Ctx, db *gorm.DB, validator *validator.Validate
 	sgp4, err := sgp4.NewSGP4(tle)
 	if err != nil {
 		c.Response().SetStatusCode(http.StatusInternalServerError)
-		return c.JSON(dto.Error{
+		return c.JSON(dto.Response{
 			Status:  http.StatusInternalServerError,
 			Message: "Error while initializing SGP4, please try again later",
 		})
@@ -47,10 +47,18 @@ func HandlePostTracking(c *fiber.Ctx, db *gorm.DB, validator *validator.Validate
 
 	observation := sgp4.ObservationFromLocation(requestData.Lat, requestData.Lng, requestData.Alt)
 
-	return c.JSON(dto.TrackingResponse{
+	trackingResponse := dto.TrackingResponse{
 		Observation: observation,
 		GeneratedAt: time.Now(),
-	})
+	}
+
+	response := dto.Response{
+		Status:  http.StatusOK,
+		Message: "",
+		Data:    trackingResponse,
+	}
+
+	return c.JSON(response)
 }
 
 func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
@@ -62,7 +70,7 @@ func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
 		return
 	}
 
-	tle, err := services.GetTLEFromDatabase(int(catNbr), db)
+	tle, err := services.GetTLEFromDatabase(catNbr, db)
 	if err != nil {
 		handleError(c, http.StatusNotFound, "TLE not found")
 		return
@@ -76,24 +84,28 @@ func HandleWsTracking(c *websocket.Conn, db *gorm.DB) {
 
 	for {
 		observation := sgp4.ObservationFromLocation(lat, lng, alt)
-		responseDto := dto.ObservationWsResponse{
-			SatelliteName: strings.TrimSpace(tle.Name()),
-			Visible:       observation.Elevation > 0,
-			GeneratedAt:   time.Now().UTC(),
-			Observation:   observation,
+		observationResponseDto := dto.ObservationWsResponse{
+			SatName:     strings.TrimSpace(tle.Name()),
+			Visible:     observation.Elevation > 0,
+			GeneratedAt: time.Now().UTC(),
+			Observation: observation,
 		}
-		if err := c.WriteJSON(responseDto); err != nil {
+		response := dto.Response{
+			Status: http.StatusOK,
+			Data:   observationResponseDto,
+		}
+		if err := c.WriteJSON(response); err != nil {
 			return
 		}
-		if _, _, err = c.ReadMessage(); err != nil {
+		if _, _, err := c.ReadMessage(); err != nil {
 			return
 		}
 		time.Sleep(time.Second)
 	}
 }
 
-func handleError(c *websocket.Conn, status uint, message string) {
-	c.WriteJSON(dto.Error{
+func handleError(c *websocket.Conn, status int, message string) {
+	c.WriteJSON(dto.Response{
 		Status:  status,
 		Message: message,
 	})

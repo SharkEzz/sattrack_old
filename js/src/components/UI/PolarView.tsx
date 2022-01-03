@@ -2,7 +2,12 @@ import { useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import azelToXY from '../../utils/azelToXY';
 
-function PolarView({ azimuth, elevation }) {
+type PolarViewProps = {
+  azimuth: number | null;
+  elevation: number | null;
+};
+
+function PolarView({ azimuth, elevation }: PolarViewProps) {
   const canvasRef = useRef(null);
 
   const draw = useCallback(

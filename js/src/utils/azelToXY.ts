@@ -1,14 +1,13 @@
 /**
  * Return the polar coordinates in a circle using the current azimuth and elevation
- *
- * @param {Number} centerX Polar view circle center X position
- * @param {Number} centerY Polar view circle center Y position
- * @param {Number} radius Polar view circle radius
- * @param {Number} azimuth Current azimuth (in deg)
- * @param {Number} elevation Current elevation (in deg)
- * @returns {{x: Number, y: Number}} The polar coordinates of the tracked element
  */
-const azelToXY = (centerX, centerY, radius, azimuth, elevation) => {
+const azelToXY = (
+  centerX: number,
+  centerY: number,
+  radius: number,
+  azimuth: number | null,
+  elevation: number | null,
+): { x: number | null; y: number | null } => {
   if (!azimuth || !elevation || azimuth < 0 || elevation < 0) {
     return {
       x: null,
