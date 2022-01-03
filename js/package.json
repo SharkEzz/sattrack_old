@@ -5,7 +5,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "eslint": "eslint . --ext .js,.jsx --fix",
+    "eslint": "eslint . --ext .ts,.tsx --fix",
     "prettier": "pre"
   },
   "dependencies": {
