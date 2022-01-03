@@ -1,19 +1,31 @@
 import { useRef, useState } from 'react';
+import { APIResponse, TrackingResponse } from '../types/api';
+
+export type WebsocketErrorType = {
+  status: number | null;
+  message: string | null;
+};
+
+export type OpenConnectionFnType = (wsUrl: string) => void;
+
+export type CloseConnectionFnType = () => void;
 
 function useWebsocket() {
   const [opened, setOpened] = useState(false);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
+  const [message, setMessage] = useState<APIResponse<TrackingResponse>>();
+  const [error, setError] = useState<WebsocketErrorType | null>(null);
   const [isOpening, setIsOpening] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const websocket = useRef(null);
+  const websocket = useRef<WebSocket>();
 
   /**
    * @param {MessageEvent} event
    */
-  const handleMessage = (event) => {
-    const receivedMessage = JSON.parse(event.data);
-    if (receivedMessage?.Status && receivedMessage.Status !== 200) {
+  const handleMessage = (event: MessageEvent<string>) => {
+    const receivedMessage: APIResponse<TrackingResponse> = JSON.parse(
+      event.data,
+    );
+    if (receivedMessage.Status > 299 || receivedMessage.Status < 200) {
       setError({
         status: receivedMessage.Status,
         message: receivedMessage.Message,
@@ -24,7 +36,7 @@ function useWebsocket() {
       setError(null);
     }
     setMessage(receivedMessage);
-    websocket.current.send('ok');
+    websocket.current?.send('ok');
   };
 
   const handleClose = () => {
@@ -38,23 +50,12 @@ function useWebsocket() {
   };
 
   const closeConnection = () => {
-    websocket.current.close();
+    websocket.current?.close();
     setIsClosing(true);
   };
 
-  /**
-   * @param {String} baseUrl
-   * @param {Number} catNbr
-   * @param {{ lat: Number, lng: Number, alt: Number }} location
-   */
-  const openConnection = (baseUrl, catNbr, location) => {
-    const url = new URL(baseUrl);
-    url.searchParams.append('catnbr', catNbr);
-    Object.keys(location).forEach((item) => {
-      url.searchParams.append(item, location[item]);
-    });
-
-    websocket.current = new WebSocket(url);
+  const openConnection = (wsUrl: string) => {
+    websocket.current = new WebSocket(wsUrl);
     websocket.current.onclose = handleClose;
     websocket.current.onopen = handleOpen;
     websocket.current.onmessage = handleMessage;
