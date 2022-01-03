@@ -21,7 +21,7 @@ function TrackingPage() {
       return null;
     }
 
-    return message;
+    return message?.Data ?? null;
   }, [message]);
   const { getLocation, location } = useLocation();
 
@@ -54,12 +54,12 @@ function TrackingPage() {
               <div className="d-flex align-items-center gap-4 mb-3">
                 <h4 className="m-0">
                   {trackingData
-                    ? trackingData.Data.SatName
+                    ? trackingData.SatName
                     : 'No satellite currently tracked'}
                 </h4>
                 {trackingData && (
-                  <Badge bg={trackingData.Data.Visible ? 'primary' : 'danger'}>
-                    {trackingData.Data.Visible ? 'Visible' : 'Not visible'}
+                  <Badge bg={trackingData.Visible ? 'primary' : 'danger'}>
+                    {trackingData.Visible ? 'Visible' : 'Not visible'}
                   </Badge>
                 )}
               </div>
@@ -68,48 +68,34 @@ function TrackingPage() {
                   <Row>
                     <Col>Azimuth:</Col>
                     <Col>
-                      <Badge>
-                        {trackingData?.Data.Azimuth.toFixed(2) ?? 'N/A'}
-                      </Badge>
+                      <Badge>{trackingData?.Azimuth.toFixed(2) ?? 'N/A'}</Badge>
                     </Col>
                   </Row>
                   <Row>
                     <Col>Elevation:</Col>
                     <Col>
                       <Badge>
-                        {trackingData?.Data.Elevation.toFixed(2) ?? 'N/A'}
+                        {trackingData?.Elevation.toFixed(2) ?? 'N/A'}
                       </Badge>
                     </Col>
                   </Row>
                   <Row>
                     <Col>Latitude:</Col>
                     <Col>
-                      <Badge>
-                        {trackingData?.Data.SatLat.toFixed(2) ?? 'N/A'}
-                      </Badge>
+                      <Badge>{trackingData?.SatLat.toFixed(2) ?? 'N/A'}</Badge>
                     </Col>
                   </Row>
                   <Row>
                     <Col>Longitude:</Col>
                     <Col>
-                      <Badge>
-                        {trackingData?.Data.SatLng.toFixed(2) ?? 'N/A'}
-                      </Badge>
+                      <Badge>{trackingData?.SatLng.toFixed(2) ?? 'N/A'}</Badge>
                     </Col>
                   </Row>
                 </Col>
                 <Col md={8} sm={12}>
                   <PolarView
-                    azimuth={
-                      trackingData
-                        ? Number(trackingData.Data.Azimuth.toFixed(2))
-                        : null
-                    }
-                    elevation={
-                      trackingData
-                        ? Number(trackingData.Data.Elevation.toFixed(2))
-                        : null
-                    }
+                    azimuth={Number(trackingData?.Azimuth.toFixed(2))}
+                    elevation={Number(trackingData?.Elevation.toFixed(2))}
                   />
                 </Col>
               </Row>

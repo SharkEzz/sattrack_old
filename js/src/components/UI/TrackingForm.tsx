@@ -2,22 +2,22 @@ import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import { Button, Col, Form, Row, Card, Alert } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { GetLocationFn, Location } from '../../hooks/useLocation';
+import { GetLocationFn, LocationType } from '../../hooks/useLocation';
 import {
-  CloseConnectionFn,
-  OpenConnectionFn,
-  WebsocketError,
+  CloseConnectionFnType,
+  OpenConnectionFnType,
+  WebsocketErrorType,
 } from '../../hooks/useWebsocket';
 
 type TrackingFormProps = {
   opened: boolean;
-  openConnection: OpenConnectionFn;
-  closeConnection: CloseConnectionFn;
+  openConnection: OpenConnectionFnType;
+  closeConnection: CloseConnectionFnType;
   getLocation: GetLocationFn;
-  location: Location;
+  location: LocationType;
   isOpening: boolean;
   isClosing: boolean;
-  error: WebsocketError | null;
+  error: WebsocketErrorType | null;
 };
 
 function TrackingForm({

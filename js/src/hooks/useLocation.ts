@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export type Location = {
+export type LocationType = {
   lat: number;
   lng: number;
   alt: number;
@@ -10,7 +10,7 @@ export type GetLocationFn = () => void;
 
 function useLocation() {
   const [initialized, setInitialized] = useState(false);
-  const [location, setLocation] = useState<Location>({
+  const [location, setLocation] = useState<LocationType>({
     lat: 0,
     lng: 0,
     alt: 0,

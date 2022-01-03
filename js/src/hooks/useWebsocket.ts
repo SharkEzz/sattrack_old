@@ -1,24 +1,24 @@
 import { useRef, useState } from 'react';
-import { APIResponse } from '../utils/types';
-import { Location } from './useLocation';
+import { APIResponse } from '../types/api';
+import { LocationType } from './useLocation';
 
-export type WebsocketError = {
+export type WebsocketErrorType = {
   status: number | null;
   message: string | null;
 };
 
-export type OpenConnectionFn = (
+export type OpenConnectionFnType = (
   baseurl: string,
   catnbr: number,
-  location: Location,
+  location: LocationType,
 ) => void;
 
-export type CloseConnectionFn = () => void;
+export type CloseConnectionFnType = () => void;
 
 function useWebsocket() {
   const [opened, setOpened] = useState(false);
   const [message, setMessage] = useState<APIResponse | null>(null);
-  const [error, setError] = useState<WebsocketError | null>(null);
+  const [error, setError] = useState<WebsocketErrorType | null>(null);
   const [isOpening, setIsOpening] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const websocket = useRef<WebSocket>();
@@ -57,15 +57,10 @@ function useWebsocket() {
     setIsClosing(true);
   };
 
-  /**
-   * @param {String} baseUrl
-   * @param {Number} catNbr
-   * @param {{ lat: Number, lng: Number, alt: Number }} location
-   */
   const openConnection = (
     baseUrl: string,
     catNbr: number,
-    location: Location,
+    location: LocationType,
   ) => {
     const url = new URL(baseUrl);
     url.searchParams.append('catnbr', String(catNbr));
