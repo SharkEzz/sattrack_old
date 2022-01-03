@@ -3,7 +3,7 @@ name: Docker
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   docker:
@@ -27,4 +27,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sattrack:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sattrack:latest, ${{ secrets.DOCKER_HUB_USERNAME }}/sattrack:${{ github.ref_name }}
