@@ -19,12 +19,10 @@ RUN npm i && npm run build
 
 FROM debian:bullseye as sattrack_runner
 
-ENV VITE_SATTRACK_VERSION=devel
-
 RUN apt-get update && apt-get install curl -y
 WORKDIR /app
 COPY --from=sattrack-back_builder /app/sattrack .
-RUN mkdir /app/database
+RUN mkdir /app/data
 COPY --from=sattrack-front_builder /app/dist ./public
 
 ENTRYPOINT [ "/app/sattrack", "-update" ]

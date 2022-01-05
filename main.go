@@ -27,7 +27,7 @@ func main() {
 	log.Println("Starting", appName, version)
 	flag.Parse()
 
-	db := database.Init("./database/local.db")
+	db := database.Init("./data/local.db")
 
 	if *shouldUpdate {
 		services.UpdateDatabase(*tleListURL, db)

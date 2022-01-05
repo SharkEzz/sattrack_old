@@ -23,6 +23,7 @@ sattrack-front:
 	npm --prefix js run build
 	mkdir public
 	mv js/dist/* public
+	rm -rf js/dist
 
 clean:
-	rm -rf sattrack public data database/local.db js/dist
+	rm -rf sattrack public data/local.db js/dist
