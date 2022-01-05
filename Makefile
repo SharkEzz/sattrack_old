@@ -25,5 +25,10 @@ sattrack-front:
 	mv js/dist/* public
 	rm -rf js/dist
 
+dev:
+	go run . &
+	npm --prefix js i
+	npm --prefix js run dev
+
 clean:
 	rm -rf sattrack public data/local.db js/dist

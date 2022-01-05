@@ -1,6 +1,8 @@
 package database
 
 import (
+	"log"
+
 	"github.com/SharkEzz/sattrack/database/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -15,6 +17,8 @@ func Init(path string) *gorm.DB {
 	}
 
 	db.AutoMigrate(&models.TLE{})
+
+	log.Println("Database initialized")
 
 	return db
 }
