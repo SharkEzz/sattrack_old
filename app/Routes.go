@@ -21,7 +21,7 @@ func InitRoutes(app *fiber.App, db *gorm.DB, validator *validator.Validate) {
 		return handlers.HandlePostTracking(c, db, validator)
 	})
 	apiGroup.Get("/passes", func(c *fiber.Ctx) error {
-		return handlers.HandlePostPasses(c, db)
+		return handlers.HandlePostPasses(c, db, validator)
 	})
 
 	// WebSocket
